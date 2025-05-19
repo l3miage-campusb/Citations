@@ -26,13 +26,11 @@ public class PhraseController {
 
    @GetMapping("/getPhrase")
    @CrossOrigin(origins = "http://localhost:4200/")
-    public ResponseEntity<Map<String, Object>> getPhrase(@RequestBody String category){
+    public ResponseEntity<Map<String, Object>> getPhrase(@RequestParam String category){
        Map<String,Object> response = new LinkedHashMap<>();
        System.out.println("Category: " + category);
        String phrase = phrasService.getPhrase(category);
        response.put("phrase", phrase);
        return ResponseEntity.ok(response);
    }
-
-
 }

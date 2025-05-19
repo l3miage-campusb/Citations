@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mes_citations/services/http_service.dart';
 
 import '../enum/Tags.dart';
 import '../models/Citation.dart';
@@ -27,6 +28,18 @@ class _HomePageState extends State<HomePage> {
 
   // Liste des favoris
   List<Citation> favorites = [];
+
+  @override
+  initState()  {
+    // TODO: implement initState
+    super.initState();
+    getCitationTest();
+
+  }
+
+  Future<void> getCitationTest() async {
+    await HttpService.fetchCitationByCategory(Tag.motivation);
+  }
 
   // Fonction pour changer de citation (simulé pour l'instant)
   void _getNewCitation() {
