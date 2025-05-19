@@ -143,6 +143,10 @@ class _FavoritesPageState extends State<FavoritesPage> {
                           citation.citation,
                           style: const TextStyle(fontSize: 16),
                         ),
+                        Text(
+                          citation.auteur,
+                          style: const TextStyle(fontSize: 13),
+                        ),
                       ],
                     ),
                   ),

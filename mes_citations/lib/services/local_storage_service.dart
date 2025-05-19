@@ -35,6 +35,7 @@ class StorageService {
     // Vérif
     for (var citation in citations) {
       print(citation.citation); // → La vie commence...
+      print(citation.auteur); // → Bastien
       print(citation.tags.map((t) => t.name).join(', ')); // → inspirant, motivation
     }
 

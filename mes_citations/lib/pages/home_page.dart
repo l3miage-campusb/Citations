@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> {
   // Citation actuellement affichée
   Citation currentCitation = Citation(
     citation: "La vie commence là où commence ta zone de confort.",
+    auteur: "Bastien",
     tags: [Tag.inspirant, Tag.motivation],
   );
 
@@ -33,6 +34,7 @@ class _HomePageState extends State<HomePage> {
       // Remplace la citation actuelle par une autre citation simulée
       currentCitation = Citation(
         citation: "Ne rêve pas ta vie, vis tes rêves.",
+        auteur: "Bastien",
         tags: [Tag.inspirant],
       );
     });
@@ -75,6 +77,15 @@ class _HomePageState extends State<HomePage> {
                         '"${currentCitation.citation}"',
                         style: const TextStyle(
                           fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          fontStyle: FontStyle.italic,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      Text(
+                        '${currentCitation.auteur}',
+                        style: const TextStyle(
+                          fontSize: 15,
                           fontWeight: FontWeight.w600,
                           fontStyle: FontStyle.italic,
                         ),
