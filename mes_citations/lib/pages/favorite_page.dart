@@ -1,19 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:localstorage/localstorage.dart';
-
 import '../enum/Tags.dart';
 import '../models/Citation.dart';
 import '../bottom_nav_bar.dart';
-import '../services/local_storage_service.dart';
+import '../services/storage.dart';
 import 'dart:developer';
 
 
 class FavoritesPage extends StatefulWidget {
   const FavoritesPage({super.key});
-
-
-
-
 
   @override
   State<FavoritesPage> createState() => _FavoritesPageState();
@@ -35,11 +29,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
       citations = favorites;
     });
   }
-
-
-
-
-
 
   // Liste des tags sélectionnés
   List<Tag> selectedTags = [];
@@ -156,7 +145,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
           ),
         ],
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 1),
     );
   }
 }
