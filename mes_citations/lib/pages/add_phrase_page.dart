@@ -26,21 +26,72 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
     super.dispose();
   }
 
-  void _submitForm() {
-    if (_formKey.currentState!.validate()) {
-      // Aquí puedes manejar la frase ingresada
-      final phrase = _phraseController.text;
-      final author = _authorController.text;
 
+  final List<String> bannedWords = [
+    'pute',
+    'merde',
+    'putain',
+    'salope',
+    'connard',
+    'con',
+    'enculé',
+    'bordel',
+    'chiant',
+    'foutre',
+    'nique',
+    'bite',
+    'couille',
+    'branleur',
+    'pédé',
+    'salaud',
+    'grognasse',
+    'ta gueule',
+    'ferme-la',
+    'trou du cul',
+    'enculer',
+  ];
+
+  bool containsBannedWords(String text) {
+    final lowerText = text.toLowerCase();
+    return bannedWords.any((word) => lowerText.contains(word));
+  }
+
+
+  void _submitForm() {
+
+
+    final phrase = _phraseController.text;
+    final author = _authorController.text;
+
+    if (_selectedTags.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez sélectionner au moins un tag.')),
+      );
+      return;
+    }
+
+    if (containsBannedWords(phrase) || containsBannedWords(author)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Langage inapproprié détecté. Veuillez reformuler la phrase.')),
+      );
+      return;
+    }
+
+    if (_formKey.currentState!.validate()) {
 
       _phraseController.clear();
       _authorController.clear();
+      _selectedTags.clear();
+
+
+      setState(() {}); // Para actualizar la UI y limpiar dropdown
 
       FocusScope.of(context).unfocus();
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Phrase ajoutée avec succès!')),
       );
+
       Citation citation = Citation(
         citation: phrase,
         auteur: author,
@@ -65,7 +116,6 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
 
       localstorage.addPhrase(citation);
 
-      setState(() {}); // Para actualizar la UI y limpiar dropdown
     }
   }
 
