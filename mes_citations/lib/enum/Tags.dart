@@ -3,6 +3,8 @@ enum Tag {
   drole,
   amour,
   motivation,
+  sagesse,
+  bonheur,
 }
 
 extension TagExtension on Tag {
@@ -16,6 +18,10 @@ extension TagExtension on Tag {
         return 'Amour';
       case Tag.motivation:
         return 'Motivation';
+      case Tag.sagesse:
+        return 'Sagesse';
+      case Tag.bonheur:
+        return 'Bonheur';
     }
   }
 }

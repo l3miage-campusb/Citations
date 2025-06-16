@@ -105,6 +105,10 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
               return Tag.amour;
             case 'Motivation':
               return Tag.motivation;
+            case 'Sagesse':
+              return Tag.sagesse;
+            case 'Bonheur':
+              return Tag.bonheur;
             default:
               throw Exception('Tag inconnu');
           }
@@ -128,77 +132,75 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
-          key: _formKey, // vinculamos el key al formulario
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _phraseController,
-                decoration: const InputDecoration(
-                  labelText: 'Phrase',
-                  border: OutlineInputBorder(),
+          key: _formKey,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _phraseController,
+                  decoration: const InputDecoration(
+                    labelText: 'Phrase',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Veuillez entrer une phrase';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Veuillez entrer une phrase';
-                  }
-                  return null; // si es válido
-                },
-              ),
-              const SizedBox(height: 20),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _authorController,
-                decoration: const InputDecoration(
-                  labelText: 'Auteur',
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: _authorController,
+                  decoration: const InputDecoration(
+                    labelText: 'Auteur',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return 'Veuillez entrer une phrase';
+                    }
+                    return null;
+                  },
                 ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Veuillez entrer une phrase';
-                  }
-                  return null; // si es válido
-                },
-              ),
-              const SizedBox(height: 20),
-
-              Align(
-                alignment: Alignment.center,
-                child: Wrap(
-                  spacing: 10,
-                  runSpacing: 10,
-                  children: ['Drôle', 'Inspirant', 'Amour', 'Motivation'].map((tag) {
-                    final isSelected = _selectedTags.contains(tag);
-                    return ChoiceChip(
-                      label: Text(tag),
-                      selected: isSelected,
-                      onSelected: (selected) {
-                        setState(() {
-                          if (selected) {
-                            _selectedTags.add(tag);
-                            for (tag in _selectedTags){
-                              print(tag);
+                const SizedBox(height: 20),
+                Align(
+                  alignment: Alignment.center,
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: ['Drôle', 'Inspirant', 'Amour', 'Motivation', 'Sagesse', 'Bonheur'].map((tag) {
+                      final isSelected = _selectedTags.contains(tag);
+                      return ChoiceChip(
+                        label: Text(tag),
+                        selected: isSelected,
+                        onSelected: (selected) {
+                          setState(() {
+                            if (selected) {
+                              _selectedTags.add(tag);
+                            } else {
+                              _selectedTags.remove(tag);
                             }
-                          } else {
-                            _selectedTags.remove(tag);
-                          }
-                        });
-                      },
-                    );
-                  }).toList(),
+                          });
+                        },
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
-
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('OK'),
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: localstorage.clearStorage,
-                child: const Text('Erase Storage'),
-              ),
-            ],
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _submitForm,
+                  child: const Text('OK'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: localstorage.clearStorage,
+                  child: const Text('Erase Storage'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

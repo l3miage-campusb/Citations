@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:mes_citations/services/http_service.dart';
 
@@ -60,8 +62,11 @@ class _HomePageState extends State<HomePage> {
 
   // Fonction pour changer de citation (simulé pour l'instant)
   void _getNewCitation() async {
-    //final newCitation = await localstorage.getRandomPhrase();
-    final newCitation = await HttpService.fetchRandomForismaticQuote();
+    final bool useApi = Random().nextBool();
+
+    final newCitation = useApi
+        ? await HttpService.fetchRandomForismaticQuote()
+        : await localstorage.getRandomPhrase();
 
     if (newCitation != null) {
       setState(() {
@@ -98,16 +103,15 @@ class _HomePageState extends State<HomePage> {
               CitationCard(citation: currentCitation!)
               ,
             // Boutons en dessous de la citation
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+            Wrap(
+              alignment: WrapAlignment.center,
+              spacing: 20,
+              runSpacing: 12,
               children: [
-                // Bouton pour obtenir une nouvelle citation
                 ElevatedButton(
                   onPressed: _getNewCitation,
                   child: const Text('Nouvelle Citation'),
                 ),
-                const SizedBox(width: 20),
-                // Bouton pour ajouter aux favoris
                 ElevatedButton(
                   onPressed: _addToFavorites,
                   child: const Text('Ajouter aux Favoris'),

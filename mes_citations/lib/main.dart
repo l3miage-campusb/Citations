@@ -18,9 +18,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    var citationsfav = ['Citation1', 'Citation2', 'Citation3'];
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Mes Citations',
       theme: ThemeData(
 
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
