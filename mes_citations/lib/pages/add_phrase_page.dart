@@ -15,7 +15,7 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
   final _formKey = GlobalKey<FormState>(); // para manejar el estado del formulario
   final TextEditingController _phraseController = TextEditingController();
   final TextEditingController _authorController = TextEditingController();
-  String? _selectedTag;
+  List<String> _selectedTags = [];
   StorageService localstorage = new StorageService();
 
 
@@ -26,33 +26,96 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
     super.dispose();
   }
 
+
+  final List<String> bannedWords = [
+    'pute',
+    'merde',
+    'putain',
+    'salope',
+    'connard',
+    'con',
+    'enculé',
+    'bordel',
+    'chiant',
+    'foutre',
+    'nique',
+    'bite',
+    'couille',
+    'branleur',
+    'pédé',
+    'salaud',
+    'grognasse',
+    'ta gueule',
+    'ferme-la',
+    'trou du cul',
+    'enculer',
+  ];
+
+  bool containsBannedWords(String text) {
+    final lowerText = text.toLowerCase();
+    return bannedWords.any((word) => lowerText.contains(word));
+  }
+
+
   void _submitForm() {
+
+
+    final phrase = _phraseController.text;
+    final author = _authorController.text;
+
+    if (_selectedTags.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Veuillez sélectionner au moins un tag.')),
+      );
+      return;
+    }
+
+    if (containsBannedWords(phrase) || containsBannedWords(author)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Langage inapproprié détecté. Veuillez reformuler la phrase.')),
+      );
+      return;
+    }
+
     if (_formKey.currentState!.validate()) {
-      // Aquí puedes manejar la frase ingresada
-      final phrase = _phraseController.text;
-      final author = _authorController.text;
-      final tag = _selectedTag!;
 
-
-      // Por ejemplo, limpiar el campo después de enviar
       _phraseController.clear();
       _authorController.clear();
-      _selectedTag = null;
+      _selectedTags.clear();
+
+
+      setState(() {}); // Para actualizar la UI y limpiar dropdown
 
       FocusScope.of(context).unfocus();
 
-      // Mostrar mensaje de éxito
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Phrase ajoutée avec succès!')),
       );
+
       Citation citation = Citation(
         citation: phrase,
         auteur: author,
-        tags: [Tag.inspirant, Tag.motivation],
+        tags: _selectedTags.map((tagString) {
+          switch (tagString) {
+            case 'Drôle':
+              return Tag.drole;
+            case 'Inspirant':
+              return Tag.inspirant;
+            case 'Amour':
+              return Tag.amour;
+            case 'Motivation':
+              return Tag.motivation;
+            default:
+              throw Exception('Tag inconnu');
+          }
+        }).toList(),
       );
+
+      print("En submit form");
+      for(var tag in _selectedTags) print(tag);
+
       localstorage.addPhrase(citation);
 
-      setState(() {}); // Para actualizar la UI y limpiar dropdown
     }
   }
 
@@ -82,10 +145,6 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
                 },
               ),
               const SizedBox(height: 20),
-              /*ElevatedButton(
-                onPressed: _submitForm,
-                child: const Text('Ajouter'),
-              ),*/
               const SizedBox(height: 20),
               TextFormField(
                 controller: _authorController,
@@ -102,37 +161,39 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
               ),
               const SizedBox(height: 20),
 
-              DropdownButtonFormField<String>(
-                decoration: const InputDecoration(
-                  labelText: 'Tag',
-                  border: OutlineInputBorder(),
+              Align(
+                alignment: Alignment.center,
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: ['Drôle', 'Inspirant', 'Amour', 'Motivation'].map((tag) {
+                    final isSelected = _selectedTags.contains(tag);
+                    return ChoiceChip(
+                      label: Text(tag),
+                      selected: isSelected,
+                      onSelected: (selected) {
+                        setState(() {
+                          if (selected) {
+                            _selectedTags.add(tag);
+                            for (tag in _selectedTags){
+                              print(tag);
+                            }
+                          } else {
+                            _selectedTags.remove(tag);
+                          }
+                        });
+                      },
+                    );
+                  }).toList(),
                 ),
-                value: _selectedTag,
-                items: ['Drôle', 'Inspirant', 'Amour', 'Motivation']
-                    .map((tag) => DropdownMenuItem(
-                  value: tag,
-                  child: Text(tag),
-                ))
-                    .toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedTag = value;
-                  });
-                },
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Veuillez choisir un tag';
-                  }
-                  return null;
-                },
               ),
 
-              const SizedBox(height: 50),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitForm,
                 child: const Text('OK'),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: localstorage.clearStorage,
                 child: const Text('Erase Storage'),
