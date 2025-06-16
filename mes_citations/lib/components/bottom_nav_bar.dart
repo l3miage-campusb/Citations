@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'pages/home_page.dart';
-import 'pages/favorite_page.dart';
-import 'pages/add_phrase_page.dart';
+import '../pages/home_page.dart';
+import '../pages/favorite_page.dart';
+import '../pages/add_phrase_page.dart';
 
 class BottomNavBar extends StatelessWidget {
   const BottomNavBar({super.key, required this.currentIndex});
