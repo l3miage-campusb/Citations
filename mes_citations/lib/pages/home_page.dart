@@ -4,7 +4,7 @@ import 'package:mes_citations/services/http_service.dart';
 import '../enum/Tags.dart';
 import '../models/Citation.dart';
 import '../bottom_nav_bar.dart';
-import '../services/local_storage_service.dart';
+import '../services/storage.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -20,12 +20,11 @@ class _HomePageState extends State<HomePage> {
 
 
   // Citation actuellement affichée
-  Citation currentCitation = Citation(
-    citation: "La vie commence là où commence ta zone de confort.",
-    auteur: "Bastien",
-    tags: [Tag.inspirant, Tag.motivation],
-  );
+  Citation? currentCitation;
 
+
+  //Liste de citations
+  List<Citation> phrases = [];
   // Liste des favoris
   List<Citation> favorites = [];
 
@@ -33,36 +32,54 @@ class _HomePageState extends State<HomePage> {
   initState()  {
     // TODO: implement initState
     super.initState();
+    localstorage.addSamplePhrases();
     getCitationTest();
-
+    loadPhrases();
+    initCitation();
   }
 
   Future<void> getCitationTest() async {
     await HttpService.fetchCitationByCategory(Tag.motivation);
   }
 
-  // Fonction pour changer de citation (simulé pour l'instant)
-  void _getNewCitation() {
+  Future<void> initCitation() async {
+    final randomCitation = await localstorage.getRandomPhrase();
     setState(() {
-      // Remplace la citation actuelle par une autre citation simulée
-      currentCitation = Citation(
-        citation: "Ne rêve pas ta vie, vis tes rêves.",
-        auteur: "Bastien",
-        tags: [Tag.inspirant],
-      );
+      currentCitation = randomCitation;
     });
   }
 
-  // Fonction pour ajouter la citation aux favoris
-  void _addToFavorites() {
-    localstorage.saveFavorite(currentCitation);
+  Future<void> loadPhrases() async {
+    final phrasesList = await localstorage.getPhrases();
     setState(() {
-      favorites.add(currentCitation);
+      phrases = phrasesList;
+    });
+  }
+
+  // Fonction pour changer de citation (simulé pour l'instant)
+  void _getNewCitation() async {
+    final newCitation = await localstorage.getRandomPhrase();
+
+    if (newCitation != null) {
+      setState(() {
+        currentCitation = newCitation;
+      });
+    }
+  }
+
+
+  void _addToFavorites() {
+    if (currentCitation == null) return;
+
+    localstorage.saveFavorite(currentCitation!);
+    setState(() {
+      favorites.add(currentCitation!);
     });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Citation ajoutée aux favoris !')),
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +104,7 @@ class _HomePageState extends State<HomePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        '"${currentCitation.citation}"',
+                        '"${currentCitation?.citation}"',
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -96,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                         textAlign: TextAlign.center,
                       ),
                       Text(
-                        '${currentCitation.auteur}',
+                        currentCitation?.auteur ?? "Auteur inconnu",
                         style: const TextStyle(
                           fontSize: 15,
                           fontWeight: FontWeight.w600,
@@ -107,12 +124,13 @@ class _HomePageState extends State<HomePage> {
                       const SizedBox(height: 12),
                       Wrap(
                         spacing: 8,
-                        children: currentCitation.tags
+                        children: currentCitation?.tags
                             .map((tag) => Chip(
                           label: Text(tag.label),
                           visualDensity: VisualDensity.compact,
                         ))
-                            .toList(),
+                            .toList() ??
+                            [],
                       ),
                     ],
                   ),
@@ -139,7 +157,7 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-      bottomNavigationBar: const BottomNavBar(),
+      bottomNavigationBar: const BottomNavBar(currentIndex: 0),
     );
 
   }
