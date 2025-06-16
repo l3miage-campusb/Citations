@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../bottom_nav_bar.dart';
+import '../components/bottom_nav_bar.dart';
 import '../models/Citation.dart';
 import '../enum/Tags.dart';
 import '../services/storage.dart';

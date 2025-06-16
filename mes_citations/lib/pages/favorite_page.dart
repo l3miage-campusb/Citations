@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import '../dialog/confirm_delete_dialog.dart';
 import '../enum/Tags.dart';
 import '../models/Citation.dart';
-import '../bottom_nav_bar.dart';
+import '../components/bottom_nav_bar.dart';
 import '../services/storage.dart';
+import '../components/citation_card.dart';
 import 'dart:developer';
 
 
@@ -39,6 +41,38 @@ class _FavoritesPageState extends State<FavoritesPage> {
     setState(() {
       citations.removeAt(index);
     });
+  }
+
+  void _confirmDeleteCitation(int index) {
+    final citation = citations[index];
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirmer la suppression'),
+          content: Text('Supprimer cette citation ?\n\n"${citation.citation}"'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fermer le dialogue
+              },
+              child: const Text('Annuler'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Fermer le dialogue
+                _removeCitation(index);      // Supprimer après confirmation
+              },
+              child: const Text(
+                'Supprimer',
+                style: TextStyle(color: Colors.red),
+              ),
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -85,62 +119,24 @@ class _FavoritesPageState extends State<FavoritesPage> {
                 : ListView.builder(
               padding: const EdgeInsets.all(12),
               itemCount: filteredCitations.length,
-              itemBuilder: (context, index) {
-                final citation = filteredCitations[index];
-                return Card(
-                  margin: const EdgeInsets.symmetric(vertical: 8),
-                  elevation: 3,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              //Les tags
-                              child: Wrap(
-                                spacing: 8,
-                                runSpacing: -8,
-                                children: citation.tags
-                                    .map((tag) => Chip(
-                                  label: Text(
-                                    tag.label,
-                                    style: const TextStyle(fontSize: 12),
-                                  ),
-                                  visualDensity: VisualDensity.compact,
-                                  padding: EdgeInsets.zero,
-                                ))
-                                    .toList(),
-                              ),
-                            ),
-                            //Bouton de suppression
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _removeCitation(index),
-                            ),
-                          ],
-                        ),
-                        //La citation
-                        const SizedBox(height: 12),
-                        Text(
-                          citation.citation,
-                          style: const TextStyle(fontSize: 16),
-                        ),
-                        Text(
-                          citation.auteur,
-                          style: const TextStyle(fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              },
+                itemBuilder: (context, index) {
+                  final citation = filteredCitations[index];
+                  return CitationCard(
+                    citation: citation,
+                    onDelete: () async {
+                      final confirm = await showConfirmDeleteDialog(
+                        context,
+                        filteredCitations[index].citation,
+                      );
+
+                      if (confirm) {
+                        final citationToRemove = filteredCitations[index];
+                        final indexInOriginal = citations.indexOf(citationToRemove);
+                        _removeCitation(indexInOriginal);
+                      }
+                    },
+                  );
+                },
             ),
           ),
         ],
