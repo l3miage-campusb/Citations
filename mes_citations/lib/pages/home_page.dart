@@ -79,17 +79,24 @@ class _HomePageState extends State<HomePage> {
 
     localstorage.saveFavorite(currentCitation!);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Citation ajoutée aux favoris !')),
+      const SnackBar(
+        content: Text('Citation ajoutée aux favoris !'),
+        backgroundColor: Colors.green,
+      ),
     );
+
   }
 
   void _enableDailyNotification() async {
     await NotificationService.scheduleDailyCitationNotification(hour: 9, minute: 0);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Notification quotidienne activée à 9h')),
-    );
 
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Notification quotidienne activée à 9h'),
+        backgroundColor: Colors.green,
+      ),
+    );
 
   }
 

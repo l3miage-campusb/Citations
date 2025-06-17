@@ -28,7 +28,10 @@ class _MesCitationsPageState extends State<MesCitationsPage> {
 
     localstorage.saveFavorite(citation);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Citation ajoutée aux favoris !')),
+      const SnackBar(
+        content: Text('Phrase ajoutée avec succès!'),
+        backgroundColor: Colors.green,
+      ),
     );
   }
 

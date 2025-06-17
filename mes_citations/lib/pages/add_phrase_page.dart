@@ -38,14 +38,20 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
 
     if (_selectedTags.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Veuillez sélectionner au moins un tag.')),
+        const SnackBar(
+          content: Text('Veuillez sélectionner au moins un tag.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
 
     if (BadWordFilter.containsBannedWords(phrase) || BadWordFilter.containsBannedWords(author)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Langage inapproprié détecté. Veuillez reformuler la phrase.')),
+        const SnackBar(
+          content: Text('Langage inapproprié détecté. Veuillez reformuler la phrase.'),
+          backgroundColor: Colors.red,
+        ),
       );
       return;
     }
@@ -89,7 +95,10 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
       localstorage.addPhrase(citation);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Phrase ajoutée avec succès!')),
+        const SnackBar(
+          content: Text('Phrase ajoutée avec succès!'),
+          backgroundColor: Colors.green,
+        ),
       );
 
     }
