@@ -7,6 +7,7 @@ import '../components/citation_card.dart';
 import '../enum/Tags.dart';
 import '../models/Citation.dart';
 import '../components/bottom_nav_bar.dart';
+import '../services/notifications.dart';
 import '../services/storage.dart';
 
 
@@ -19,7 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   StorageService localstorage = new StorageService();
-
 
 
   // Citation actuellement affichée
@@ -88,11 +88,29 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _enableDailyNotification() async {
+    await NotificationService.scheduleDailyCitationNotification(hour: 15, minute: 5);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Notification quotidienne activée à 9h')),
+    );
+
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Page d\'Accueil')),
+        appBar: AppBar(
+          title: const Text('Page d\'Accueil'),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.notifications_active),
+              tooltip: 'Activer la notification quotidienne',
+              onPressed: _enableDailyNotification,
+            ),
+          ],
+        ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -117,6 +135,7 @@ class _HomePageState extends State<HomePage> {
                   child: const Text('Ajouter aux Favoris'),
                 ),
               ],
+
             ),
           ],
         ),
