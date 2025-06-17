@@ -134,6 +134,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
                         _removeCitation(indexInOriginal);
                       }
                     },
+                    showFavoriteButton: false,
                   );
                 },
             ),

@@ -2,21 +2,45 @@ import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart'; // ← ajout ici
 import '../../models/Citation.dart';
 import '../../enum/Tags.dart';
+import '../services/storage.dart';
 
-class CitationCard extends StatelessWidget {
+class CitationCard extends StatefulWidget {
   final Citation citation;
-  final VoidCallback? onDelete; // devient optionnel
+  final VoidCallback? onDelete;
   final VoidCallback? onFavorite;
+  final bool showFavoriteButton;
 
   const CitationCard({
     super.key,
     required this.citation,
     this.onDelete,
     this.onFavorite,
+    this.showFavoriteButton = true,
   });
 
+  @override
+  State<CitationCard> createState() => _CitationCardState();
+}
+
+class _CitationCardState extends State<CitationCard> {
+  bool isFavorite = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkIfFavorite();
+  }
+
+  Future<void> _checkIfFavorite() async {
+    final favorites = await StorageService().getFavorites();
+    final fav = favorites.any((c) => c.citation == widget.citation.citation);
+    setState(() {
+      isFavorite = fav;
+    });
+  }
+
   void _shareCitation(BuildContext context) {
-    final text = '"${citation.citation}"\n\n- ${citation.auteur}';
+    final text = '"${widget.citation.citation}"\n\n- ${widget.citation.auteur}';
     Share.share(text);
   }
 
@@ -41,7 +65,7 @@ class CitationCard extends StatelessWidget {
                   child: Wrap(
                     spacing: 8,
                     runSpacing: -8,
-                    children: citation.tags
+                    children: widget.citation.tags
                         .map((tag) => Chip(
                       label: Text(
                         tag.label,
@@ -56,21 +80,24 @@ class CitationCard extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (onFavorite != null)
+                    if (widget.showFavoriteButton)
                       IconButton(
-                        icon: const Icon(Icons.favorite_border, color: Colors.pink),
-                        onPressed: onFavorite,
-                        tooltip: "Ajouter aux favoris",
+                        icon: Icon(
+                          isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: Colors.pink,
+                        ),
+                        onPressed: isFavorite ? null : widget.onFavorite,
+                        tooltip: isFavorite ? "Déjà en favoris" : "Ajouter aux favoris",
                       ),
                     IconButton(
                       icon: const Icon(Icons.share, color: Colors.blue),
                       onPressed: () => _shareCitation(context),
                       tooltip: "Partager",
                     ),
-                    if (onDelete != null)
+                    if (widget.onDelete != null)
                       IconButton(
                         icon: const Icon(Icons.delete, color: Colors.red),
-                        onPressed: onDelete,
+                        onPressed: widget.onDelete,
                         tooltip: "Supprimer",
                       ),
                   ],
@@ -79,11 +106,11 @@ class CitationCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             Text(
-              citation.citation,
+              widget.citation.citation,
               style: const TextStyle(fontSize: 16),
             ),
             Text(
-              citation.auteur,
+              widget.citation.auteur,
               style: const TextStyle(fontSize: 13),
             ),
           ],
