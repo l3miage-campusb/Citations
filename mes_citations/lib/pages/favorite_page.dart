@@ -36,7 +36,6 @@ class _FavoritesPageState extends State<FavoritesPage> {
   List<Tag> selectedTags = [];
 
   void _removeCitation(int index) {
-    print("testlog");
     localstorage.removeFavorite(citations.elementAt(index));
     setState(() {
       citations.removeAt(index);
@@ -86,7 +85,7 @@ class _FavoritesPageState extends State<FavoritesPage> {
     }).toList();
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Mes Citations')),
+      appBar: AppBar(title: const Text('Favoris')),
       body: Column(
         children: [
           // Filtre par tags

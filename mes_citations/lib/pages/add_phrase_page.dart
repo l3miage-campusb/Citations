@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import '../components/bottom_nav_bar.dart';
+import '../components/top_navigation_bar.dart';
+import '../utils/bad_word_filter.dart';
 import '../models/Citation.dart';
 import '../enum/Tags.dart';
 import '../services/storage.dart';
@@ -26,34 +28,6 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
   }
 
 
-  final List<String> bannedWords = [
-    'pute',
-    'merde',
-    'putain',
-    'salope',
-    'connard',
-    'con',
-    'enculé',
-    'bordel',
-    'chiant',
-    'foutre',
-    'nique',
-    'bite',
-    'couille',
-    'branleur',
-    'pédé',
-    'salaud',
-    'grognasse',
-    'ta gueule',
-    'ferme-la',
-    'trou du cul',
-    'enculer',
-  ];
-
-  bool containsBannedWords(String text) {
-    final lowerText = text.toLowerCase();
-    return bannedWords.any((word) => lowerText.contains(word));
-  }
 
 
   void _submitForm() {
@@ -69,7 +43,7 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
       return;
     }
 
-    if (containsBannedWords(phrase) || containsBannedWords(author)) {
+    if (BadWordFilter.containsBannedWords(phrase) || BadWordFilter.containsBannedWords(author)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Langage inapproprié détecté. Veuillez reformuler la phrase.')),
       );
@@ -135,6 +109,8 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const TopNavigationBar(isOnAjouterPhrase: true),
+                const SizedBox(height: 20),
                 TextFormField(
                   controller: _phraseController,
                   decoration: const InputDecoration(
