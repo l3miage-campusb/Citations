@@ -19,7 +19,6 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
   StorageService localstorage = new StorageService();
 
 
-
   @override
   void dispose() {
     _phraseController.dispose();
@@ -79,19 +78,6 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
 
     if (_formKey.currentState!.validate()) {
 
-      _phraseController.clear();
-      _authorController.clear();
-      _selectedTags.clear();
-
-
-      setState(() {}); // Para actualizar la UI y limpiar dropdown
-
-      FocusScope.of(context).unfocus();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Phrase ajoutée avec succès!')),
-      );
-
       Citation citation = Citation(
         citation: phrase,
         auteur: author,
@@ -115,10 +101,21 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
         }).toList(),
       );
 
+      _phraseController.clear();
+      _authorController.clear();
+      _selectedTags.clear();
+
+      setState(() {}); // Para actualizar la UI y limpiar dropdown
+
+      FocusScope.of(context).unfocus();
+
       print("En submit form");
       for(var tag in _selectedTags) print(tag);
-
       localstorage.addPhrase(citation);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Phrase ajoutée avec succès!')),
+      );
 
     }
   }
