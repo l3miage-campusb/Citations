@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages/mes_citations.dart';
+import '../pages/mes_citations_page.dart';
 import '../pages/add_phrase_page.dart';
 
 class TopNavigationBar extends StatelessWidget {

@@ -33,9 +33,8 @@ class NotificationService {
       print('Permission notification refusée, notification non planifiée');
       return;
     }
-    print("on a programmé la notif pour $hour:$minute");
+
     final scheduled = _nextInstanceOfTime(hour, minute);
-    print("Notification prévue à : $scheduled");
     Citation? citation = await HttpService.fetchRandomForismaticQuote();
 
     if (citation == null) return;

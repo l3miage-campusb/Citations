@@ -6,11 +6,13 @@ import '../../enum/Tags.dart';
 class CitationCard extends StatelessWidget {
   final Citation citation;
   final VoidCallback? onDelete; // devient optionnel
+  final VoidCallback? onFavorite;
 
   const CitationCard({
     super.key,
     required this.citation,
     this.onDelete,
+    this.onFavorite,
   });
 
   void _shareCitation(BuildContext context) {
@@ -54,6 +56,12 @@ class CitationCard extends StatelessWidget {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    if (onFavorite != null)
+                      IconButton(
+                        icon: const Icon(Icons.favorite_border, color: Colors.pink),
+                        onPressed: onFavorite,
+                        tooltip: "Ajouter aux favoris",
+                      ),
                     IconButton(
                       icon: const Icon(Icons.share, color: Colors.blue),
                       onPressed: () => _shareCitation(context),

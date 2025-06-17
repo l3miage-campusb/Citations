@@ -14,7 +14,8 @@ class HttpService {
     try {
       final response = await http.get(uri);
       if (response.statusCode == 200) {
-        final data = json.decode(response.body);
+        final cleanedBody = response.body.replaceAll(r"\'", "'");
+        final data = json.decode(cleanedBody);
         final phrase = data['quoteText'] as String?;
         final auteur = data['quoteAuthor']?.toString().trim();
 

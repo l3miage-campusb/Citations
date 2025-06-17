@@ -55,6 +55,7 @@ class _AddPhrasePageState extends State<AddPhrasePage> {
       Citation citation = Citation(
         citation: phrase,
         auteur: author,
+        isMine:true,
         tags: _selectedTags.map((tagString) {
           switch (tagString) {
             case 'Drôle':

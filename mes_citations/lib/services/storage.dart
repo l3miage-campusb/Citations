@@ -48,7 +48,6 @@ class StorageService {
       await addPhrase(c);
     }
 
-    print("✔️ 5 phrases ajoutées pour les tests.");
   }
 
   Future<Citation?> getRandomPhrase() async {
@@ -82,7 +81,6 @@ class StorageService {
 
     // Verificar si ya existe la cita (puedes ajustar el criterio si quieres)
     if (phrases.any((c) => c.citation == citation.citation)) {
-      print("Storage : Déjà présent dans les phrases");
       return;
     }
 
@@ -102,7 +100,6 @@ class StorageService {
         .toList();
 
 
-    print("Storage : Citation ajoutée !");
 
   }
 
@@ -111,10 +108,8 @@ class StorageService {
 
     final phrases = _storage.getItem("phrases");
 
-    print("Mes phrases : $phrases");
 
     if (phrases == null) {
-      print("je suis nul ?");
       return [];
     }
 
@@ -132,10 +127,8 @@ class StorageService {
 
     final fav = _storage.getItem("favorites");
 
-    print("j'ai get en favoris : $fav");
 
     if (fav == null) {
-      print("je suis nul ?");
       return [];
     }
 
@@ -146,11 +139,11 @@ class StorageService {
         .toList();
 
     // Debug print
-    for (var citation in citations) {
-      print(citation.citation);
-      print(citation.auteur);
-      print(citation.tags.map((t) => t.name).join(', '));
-    }
+    //for (var citation in citations) {
+    //  print(citation.citation);
+    //  print(citation.auteur);
+    // print(citation.tags.map((t) => t.name).join(', '));
+    //}
 
     return citations;
   }
@@ -171,7 +164,6 @@ class StorageService {
 
     // Verificar si ya existe la cita (puedes ajustar el criterio si quieres)
     if (favorites.any((c) => c.citation == citation.citation)) {
-      print("Déjà présent dans les favoris");
       return;
     }
 
@@ -183,7 +175,6 @@ class StorageService {
       favorites.map((c) => c.toJson()).toList(),
     );
 
-    print("Citation ajoutée !");
   }
 
   Future<void> removeFavorite(Citation citation) async {
@@ -205,14 +196,12 @@ class StorageService {
       favorites.map((c) => c.toJson()).toList(),
     );
 
-    print("Citation supprimée");
   }
 
 
   Future<void> clearStorage() async {
     await _storage.ready;
     await _storage.clear();
-    print("Storage limpiado completamente.");
   }
 
 

@@ -28,8 +28,6 @@ class _HomePageState extends State<HomePage> {
 
   //Liste de citations
   List<Citation> phrases = [];
-  // Liste des favoris
-  List<Citation> favorites = [];
 
   @override
   initState()  {
@@ -80,16 +78,13 @@ class _HomePageState extends State<HomePage> {
     if (currentCitation == null) return;
 
     localstorage.saveFavorite(currentCitation!);
-    setState(() {
-      favorites.add(currentCitation!);
-    });
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Citation ajoutée aux favoris !')),
     );
   }
 
   void _enableDailyNotification() async {
-    await NotificationService.scheduleDailyCitationNotification(hour: 15, minute: 5);
+    await NotificationService.scheduleDailyCitationNotification(hour: 9, minute: 0);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Notification quotidienne activée à 9h')),
@@ -118,7 +113,8 @@ class _HomePageState extends State<HomePage> {
           children: [
             // Affichage de la citation actuelle
             if(currentCitation != null)
-              CitationCard(citation: currentCitation!)
+              CitationCard(citation: currentCitation!,
+                          onFavorite: _addToFavorites,)
               ,
             // Boutons en dessous de la citation
             Wrap(
@@ -129,10 +125,6 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                   onPressed: _getNewCitation,
                   child: const Text('Nouvelle Citation'),
-                ),
-                ElevatedButton(
-                  onPressed: _addToFavorites,
-                  child: const Text('Ajouter aux Favoris'),
                 ),
               ],
 

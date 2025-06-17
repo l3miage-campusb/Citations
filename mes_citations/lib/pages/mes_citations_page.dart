@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mes_citations/components/citation_card.dart';
 import '../components/top_navigation_bar.dart';
 import '../components/bottom_nav_bar.dart';
 import '../models/Citation.dart';
@@ -23,13 +24,21 @@ class _MesCitationsPageState extends State<MesCitationsPage> {
     _loadCitations();
   }
 
+  void _addToFavorites(Citation citation) {
+
+    localstorage.saveFavorite(citation);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Citation ajoutée aux favoris !')),
+    );
+  }
+
   Future<void> _loadCitations() async {
     await StorageService.init(); // espera a que localstorage esté listo
     List<Citation> loadedCitations = await localstorage.getPhrases();
 
-    // Opcional: filtrar citas con auteur == "Ernesto"
+    loadedCitations.forEach((c) => print("c cita : ${c.citation} c is mine : ${c.isMine}"));
     loadedCitations = loadedCitations
-        .where((c) => c.auteur.trim().toLowerCase() == 'gyg')
+        .where((c) => c.isMine == true)
         .toList();
 
     setState(() {
@@ -49,21 +58,12 @@ class _MesCitationsPageState extends State<MesCitationsPage> {
             child: isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : citations.isEmpty
-                ? const Center(child: Text("Aucune citation d'Ernesto."))
+                ? const Center(child: Text("Aucune citation personnelle."))
                 : ListView.builder(
               itemCount: citations.length,
               itemBuilder: (context, index) {
                 final citation = citations[index];
-                return ListTile(
-                  title: Text(citation.citation),
-                  subtitle: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text('Auteur : ${citation.auteur}'),
-                      Text('Tags : ${citation.tags.map((tag) => tag.name).join(', ')}'),
-                    ],
-                  ),
-                );
+                return CitationCard(citation : citation,onFavorite: () => _addToFavorites(citation),);
               },
             ),
           ),
